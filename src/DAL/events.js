@@ -11,5 +11,5 @@ export async function collectEvents(date){
         .from("events")
         .where(function() {
             this.where("weekly_recurring", true).orWhere("ends_at", ">", +date);
-        }).orderBy("kind", 'desc');
+        });
 }
