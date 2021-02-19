@@ -16,7 +16,7 @@ export default async function getAvailabilities(date) {
     .from("events")
     .where(function() {
       this.where("weekly_recurring", true).orWhere("ends_at", ">", +date);
-    });
+    }).orderBy("kind", 'desc');
 
   for (const event of events) {
     for (
@@ -25,7 +25,7 @@ export default async function getAvailabilities(date) {
       date.add(30, "minutes")
     ) {
       const day = availabilities.get(date.format("d"));
-      if (event.kind === "opening") {
+      if (event.kind === "opening" && date.diff(day.date,'days')<=0) {
         day.slots.push(date.format("H:mm"));
       } else if (event.kind === "appointment") {
         day.slots = day.slots.filter(
