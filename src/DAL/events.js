@@ -5,7 +5,7 @@ import knex from "knexClient";
  * @param date
  * @return {Promise<*>}
  */
-async function collectEvents(date){
+export async function collectEvents(date){
     return await knex
         .select("kind", "starts_at", "ends_at", "weekly_recurring")
         .from("events")
