@@ -1,8 +1,13 @@
 import moment from "moment";
 import knex from "knexClient";
 
-export default async function getAvailabilities(date) {
-  const availabilities = new Map();
+/**
+ * Function that initializes availabilities in a map according to weekdays
+ * @param date
+ * @return {Map<any, any>}
+ */
+function initializeAvailabilities(date){
+  let availabilities = new Map();
   for (let i = 0; i < 7; ++i) {
     const tmpDate = moment(date).add(i, "days");
     availabilities.set(tmpDate.format("d"), {
@@ -10,13 +15,31 @@ export default async function getAvailabilities(date) {
       slots: []
     });
   }
+  return availabilities;
+}
 
-  const events = await knex
-    .select("kind", "starts_at", "ends_at", "weekly_recurring")
-    .from("events")
-    .where(function() {
-      this.where("weekly_recurring", true).orWhere("ends_at", ">", +date);
-    }).orderBy("kind", 'desc');
+/**
+ * Function that collects all relevant events  : opening and appointements
+ * @param date
+ * @return {Promise<*>}
+ */
+async function collectEvents(date){
+  return await knex
+      .select("kind", "starts_at", "ends_at", "weekly_recurring")
+      .from("events")
+      .where(function() {
+        this.where("weekly_recurring", true).orWhere("ends_at", ">", +date);
+      }).orderBy("kind", 'desc');
+}
+
+/**
+ * Function that gets availabilities of the next 7 days
+ * @param date
+ * @return {Promise<*[]>}
+ */
+export default async function getAvailabilities(date) {
+  const availabilities = initializeAvailabilities(date);
+  const events = await collectEvents(date);
 
   for (const event of events) {
     for (
