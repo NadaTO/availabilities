@@ -5,12 +5,16 @@ describe("getAvailabilities", () => {
   beforeEach(() => knex("events").truncate());
 
   describe("case 1", () => {
-    it("test 1", async () => {
+    it("takes 7 as Default number of availability Checks", async () => {
       const availabilities = await getAvailabilities(new Date("2014-08-10"));
       expect(availabilities.length).toBe(7);
       for (let i = 0; i < 7; ++i) {
         expect(availabilities[i].slots).toEqual([]);
       }
+    });
+    it("can extend availabilities to a customized number of days", async () => {
+      const availabilities = await getAvailabilities(new Date("2014-08-10"),17);
+      expect(availabilities.length).toBe(17);
     });
   });
 
