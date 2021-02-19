@@ -1,5 +1,5 @@
 import knex from "knexClient";
-import getAvailabilities from "./getAvailabilities";
+import getAvailabilities from "../Service/getAvailabilities";
 
 describe("getAvailabilities", () => {
   beforeEach(() => knex("events").truncate());
